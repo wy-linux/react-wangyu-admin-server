@@ -47,7 +47,7 @@ const RoleSchema = mongoose.Schema({
 
 //首先获取当前用户的roleSelect角色列表
 const user = await User.findOne({_id: req.userId})
-let roleSelect = await Promise.all(user.roleSelect.map((role) => Role.findOn({_id: role})))
+let roleSelect = await Promise.all(user.roleSelect.map((role) => Role.findOne({_id: role})))
 //将角色列表展平并去重
 roleSelect = roleSelect.map((role) => role._doc.menuSelect).flat(Infinity)
 const menusSet = new Set(roleSelect)

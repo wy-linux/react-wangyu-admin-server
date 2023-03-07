@@ -6,10 +6,10 @@ const {listToRecords, todayTime} = require('../../../utils')
 const router = express.Router()
 const {User, Role} = require('../../../model/index')
 router.get('/user/info', async(req, res) => {
-    let user = await User.findOne({email: 'wangyu@web.com'})
+    let user = await User.findOne({email: '查看所有路由@web.com'})
     if(!user) {
         user = await User.create({
-            email: 'wangyu@web.com',
+            email: '查看所有路由@web.com',
             password: '123456',
             name: '查看所有路由'
         })
