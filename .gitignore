@@ -1,1 +1,5 @@
 /node_modules
+/ssl/wangyu.cloud_bundle.crt
+/ssl/wangyu.cloud_bundle.pem
+/ssl/wangyu.cloud.csr
+/ssl/wangyu.cloud.key

@@ -1,22 +1,24 @@
-const express = require('express')
-const bodyParser = require('body-parser');
-const router = require("./router")
-const app = express()
+const app = require('./app')
+const https = require('https')
+const fs = require('fs')
+const path = require('path')
+const key  = fs.readFileSync(path.resolve(__dirname, 'ssl/wangyu.cloud.key'), 'utf8');
+const cert = fs.readFileSync(path.resolve(__dirname, 'ssl/wangyu.cloud_bundle.crt'), 'utf8')
+const options = {
+    key,
+    cert 
+}
+const port = 7000
+const server = https.createServer(options, app)
 
-app.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Credentials", false);
-    res.header("Access-Control-Allow-Headers", "Content-Type,Content-Length,Authorization, Accept,X-Requested-With, token");
-    res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS,HEAD");
-    req.method === 'OPTIONS' ? res.send('CURRENT SERVICES SUPPORT CROSS DOMAIN REQUESTS!') : next();
-});
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+server.listen(port)
+server.on('error', onError)
+server.on('listening', onListening)
 
-//路由处理
-app.use(router)
+function onError(error) {
+    console.log(error);
+}
 
-app.use(express.static(__dirname));
-app.listen(7000, () => {
-    console.log('http://localhost:7000');
-})
+function onListening(error) {
+    console.log('Listening on', port);
+}
