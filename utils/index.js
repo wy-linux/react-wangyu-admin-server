@@ -37,9 +37,14 @@ function listToRecords(list) {
     }
 }
 const auth = async (req, res, next) => {
+    if(req.url.includes('/user/login')) {
+        return next()
+    }
     if(!req.headers.authorization ) {
         req.user = null
-        return res.send('暂无权限')
+        return res.status(401).send({
+            message: '暂无权限'
+        })
     }
     const raw = String(req.headers.authorization)
     const tokenData = jwt.verify(raw, SECRET)

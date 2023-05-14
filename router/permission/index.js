@@ -1,18 +1,15 @@
 const express = require("express")
 const router = express.Router()
 const {Menu, User, Role} = require('../../model')
-const {auth} = require('../../utils')
 const userRouter = require("./user")
 const roleRouter = require("./role")
 const menuRouter = require("./menu")
-
 
 router.use("/permission", userRouter)
 router.use("/permission", roleRouter)
 router.use("/permission", menuRouter)
 
-
-router.use("/permission/info", auth, async(req, res) => {
+router.use("/permission/info", async(req, res) => {
     const user = await User.findOne({_id: req.userId})
     let roleSelect = await Promise.all(user.roleSelect.map((role) => Role.findOne({_id: role})))
     roleSelect = roleSelect.map((role) => role._doc.menuSelect).flat(Infinity)
