@@ -10,30 +10,35 @@ router.use("/permission", roleRouter)
 router.use("/permission", menuRouter)
 
 router.use("/permission/info", async(req, res) => {
-    const user = await User.findOne({_id: req.userId})
-    let roleSelect = await Promise.all(user.roleSelect.map((role) => Role.findOne({_id: role})))
-    roleSelect = roleSelect.map((role) => role._doc.menuSelect).flat(Infinity)
-    const menusSet = new Set(roleSelect)
-    let menus = await Menu.find().exec()
     const routes = []
     const buttons = []
-    for(let i = 0; i < menus.length; i++) {
-        //按钮权限
-        if(menus[i].level === 4 && menusSet.has(menus[i]._id.toString())) {
-            buttons.push(menus[i].code)
-        }else if(menus[i].code !== '' && menusSet.has(menus[i]._id.toString())){//路由权限
-            routes.push(menus[i].code)
-        }
+    try {
+        const user = await User.findOne({_id: req.userId})
+        let roleSelect = await Promise.all(user.roleSelect.map((role) => Role.findOne({_id: role})))
+        roleSelect = roleSelect.map((role) => role.menuSelect).flat(Infinity)
+        const menusSet = new Set(roleSelect)
+        let menus = await Menu.find()
+        for(let i = 0; i < menus.length; i++) {
+            //按钮权限
+            if(menus[i].level === 4 && menusSet.has(menus[i].id)) {
+                buttons.push(menus[i].code)
+            //路由权限
+            }else if(menus[i].code !== '' && menusSet.has(menus[i].id)){
+                routes.push(menus[i].code)
+            }
+        } 
+    } catch (err) {
+        //todo
+    } finally {
+        res.send({
+            data: {
+                routes,
+                buttons,
+                name: req.userId,
+                avatar: 'wangyu-admin'
+            },
+            message: '获取成功'
+        })
     }
-    res.send({
-        data: {
-            routes,
-            buttons,
-            name: user._id,
-            avatar: 'wangyu-admin'
-        },
-        message: '获取成功'
-    })
-
 })
 module.exports = router

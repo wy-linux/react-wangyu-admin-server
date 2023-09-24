@@ -10,10 +10,9 @@ router.get('/menu/info', async(req, res) => {
             name: '全部数据',
         })
     }
-    let menus  = await Menu.find()
-    menus = menus.map(menu => menu._doc)
+    let menus  = await Menu.find().exec()
+    menus = menus.map((menu) => menu.toObject())
     const Tree = menuListToTree(menus)
-    // menus = menus._doc
     res.send({
         data: [Tree],
         message: '获取成功'
@@ -23,8 +22,8 @@ router.get('/menu/delete/:id', async(req, res) => {
     const menus = await Menu.find()
     //先删除子节点
     menus.forEach(async(menu) => {
-        if(menu._doc.pid === req.params.id) {
-            await Menu.findByIdAndDelete({_id: menu._doc._id})
+        if(menu.pid === req.params.id) {
+            await Menu.findByIdAndDelete({_id: menu.id})
         }
     })
     //再删除当前节点
